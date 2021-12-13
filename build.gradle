@@ -7,14 +7,13 @@ buildscript {
 
 plugins {
     id 'java'
-    id 'com.github.johnrengelman.shadow' version '6.1.0'
-    id 'kr.entree.spigradle' version '2.2.3'
-    id 'io.freefair.lombok' version '5.3.0'
+    id 'com.github.johnrengelman.shadow' version '7.1.0'
+    id 'kr.entree.spigradle' version '2.2.4'
+    id 'io.freefair.lombok' version '6.3.0'
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
+sourceCompatibility = 17
+targetCompatibility = 17
 
 ext {
     mcVersion = project.property("minecraft.version")
@@ -23,6 +22,9 @@ ext {
 group project.property("plugin.group")
 archivesBaseName = project.property("plugin.name")
 
+downloadPaper {
+    source = 'https://papermc.io/api/v2/projects/paper/versions/1.18/builds/66/downloads/paper-1.18-66.jar'
+}
 spigot {
     name = project.property("plugin.name")
     authors = [project.property("plugin.author")]
@@ -32,6 +34,7 @@ spigot {
     //    depends = ['']
     debug {
          buildVersion = project.property("minecraft.version")
+         jvmArgs '-Xmx1G'
     }
 }
 
@@ -63,7 +66,8 @@ def urlFile = { url, name ->
 dependencies {
 
     // Game core
-    compileOnly spigot(project.property("minecraft.version"))
+    implementation spigot(project.property("minecraft.version"))
+    // compileOnly paper(project.property("minecraft.version"))
 
     // Tests
     testImplementation 'org.junit.jupiter:junit-jupiter:5.+'
@@ -72,26 +76,25 @@ dependencies {
     testImplementation 'org.assertj:assertj-core:3.+'
 
     // Command parsing
-    compile 'com.mojang:brigadier:1.0.17'
-    compile "co.aikar:acf-paper:0.5.0-SNAPSHOT"
+    // compile "co.aikar:acf-paper:0.5.0-SNAPSHOT"
 
-    // https://mvnrepository.com/artifact/commons-io/commons-io
-    compile group: 'commons-io', name: 'commons-io', version: '2.8.0'
+    // // https://mvnrepository.com/artifact/commons-io/commons-io
+    // compile group: 'commons-io', name: 'commons-io', version: '2.8.0'
 
-    // JSON handler
-    implementation 'com.google.code.gson:gson:2.8.6'
+    // // JSON handler
+    // implementation 'com.google.code.gson:gson:2.8.6'
 
 }
 
-shadowJar {
-    classifier = ''
-    version = project.property("plugin.version")
-    relocate 'co.aikar.commands', "${project.property('plugin.group')}.${project.property('plugin.name')}.acf"
-    relocate 'co.aikar.locales', "${project.property('plugin.group')}.${project.property('plugin.name')}.locales"
-}
+// shadowJar {
+//     classifier = ''
+//     version = project.property("plugin.version")
+//     relocate 'co.aikar.commands', "${project.property('plugin.group')}.${project.property('plugin.name')}.acf"
+//     relocate 'co.aikar.locales', "${project.property('plugin.group')}.${project.property('plugin.name')}.locales"
+// }
 
-tasks.build.dependsOn(shadowJar)
-tasks.prepareSpigotPlugins.dependsOn(shadowJar)
+// tasks.build.dependsOn(shadowJar)
+// tasks.prepareSpigotPlugins.dependsOn(shadowJar)
 
 test {
     useJUnitPlatform()
